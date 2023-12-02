@@ -1,3 +1,5 @@
+mod day1;
+
 /// Common structure for solution to a day's challenge
 pub trait Harness {
     /// Calculate part 1 answer for the given input
@@ -11,7 +13,7 @@ pub trait Harness {
 /// Get the solution for a specific day
 pub fn get_solution(day: u8) -> Box<dyn Harness> {
     match day {
-        // TODO
+        1 => Box::new(day1::Day1 {}),
         _ => panic!("Day {} not available", day)
     }
 }
