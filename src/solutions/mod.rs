@@ -7,6 +7,7 @@ mod day6;
 mod day7;
 mod day8;
 mod day9;
+mod day10;
 
 /// Common structure for solution to a day's challenge
 pub trait Harness {
@@ -30,6 +31,7 @@ pub fn get_solution(day: u8) -> Box<dyn Harness> {
         7 => Box::new(day7::Day7 {}),
         8 => Box::new(day8::Day8 {}),
         9 => Box::new(day9::Day9 {}),
+        10 => Box::new(day10::Day10 {}),
         _ => panic!("Day {} not available", day)
     }
 }

@@ -4,6 +4,7 @@ use std::io;
 use clap::Parser;
 
 mod solutions;
+mod utils;
 
 #[derive(Parser, Debug)]
 struct Args {
