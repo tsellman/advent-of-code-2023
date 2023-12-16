@@ -67,6 +67,10 @@ impl Direction {
             West => North,
         }
     }
+
+    pub fn rotate_anticlockwise(&self) -> Direction {
+        self.rotate_clockwise().invert()
+    }
 }
 
 // -------------------------------------------------------------------------------------------------
