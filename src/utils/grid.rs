@@ -40,9 +40,23 @@ impl<T> Grid<T> {
             .and_then(|row| row.get(p.x as usize))
     }
 
+    /// Set the value at the given point, if it's within the grid bounds
+    pub fn set(&mut self, p: &Point, value: T) {
+        if let Some(row) = self.cells.get_mut(p.y as usize) {
+            if let Some(v) = row.get_mut(p.x as usize) {
+                *v = value;
+            }
+        }
+    }
+
     /// Get an iterator over all the Points in the grid (row-wise)
     pub fn points(&self) -> ByRowIterator<T> {
         ByRowIterator { grid: self, current: None }
+    }
+
+    /// Get an iterator over all the Points in the grid (column-wise)
+    pub fn points_by_column(&self) -> ByColumnIterator<T> {
+        ByColumnIterator { grid: self, current: None }
     }
 
     /// Iterating row-wise, find the first point where the given predicate is true
@@ -50,6 +64,19 @@ impl<T> Grid<T> {
         self.points()
             .filter(|p| self.get(p).filter(|v| predicate(*v)).is_some())
             .next()
+    }
+
+    /// Find all points where the given predicate is true
+    pub fn find_all<P: Fn(&T) -> bool>(&self, predicate: P) -> Vec<Point> {
+        self.points()
+            .filter(|p| self.get(p).filter(|v| predicate(*v)).is_some())
+            .collect()
+    }
+
+    pub fn find_all_columnwise<P: Fn(&T) -> bool>(&self, predicate: P) -> Vec<Point> {
+        self.points_by_column()
+            .filter(|p| self.get(p).filter(|v| predicate(*v)).is_some())
+            .collect()
     }
 
     /// Get the point which is one position to the given direction of the given point (if valid)
@@ -116,6 +143,32 @@ impl<'a, T> Iterator for ByRowIterator<'a, T> {
 }
 
 // -------------------------------------------------------------------------------------------------
+
+pub struct ByColumnIterator<'a, T> {
+    grid: &'a Grid<T>,
+    current: Option<Point>,
+}
+
+impl<'a, T> Iterator for ByColumnIterator<'a, T> {
+    type Item = Point;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let mut next = Point::new(0, 0);
+        if let Some(Point { x, y }) = self.current {
+            next.y = y + 1;
+            next.x = x;
+            if next.y >= self.grid.height() {
+                next.y = 0;
+                next.x += 1;
+            }
+            if next.x >= self.grid.width() { return None; }
+        }
+        self.current = Some(next);
+        self.current
+    }
+}
+
+// -------------------------------------------------------------------------------------------------
 // tests
 
 #[cfg(test)]
@@ -173,6 +226,18 @@ mod tests {
             Point::new(2, 2), Point::new(1, 2), Point::new(0, 2),
             Point::new(2, 1), Point::new(1, 1), Point::new(0, 1),
             Point::new(2, 0), Point::new(1, 0), Point::new(0, 0),
+        ])
+    }
+
+    #[test]
+    fn iterate_by_column() {
+        let grid = Grid::<i32>::new(vec![vec![0; 3]; 4]);
+
+        let points = grid.points_by_column().collect::<Vec<_>>();
+        assert_eq!(points, vec![
+            Point::new(0, 0), Point::new(0, 1), Point::new(0, 2), Point::new(0, 3),
+            Point::new(1, 0), Point::new(1, 1), Point::new(1, 2), Point::new(1, 3),
+            Point::new(2, 0), Point::new(2, 1), Point::new(2, 2), Point::new(2, 3),
         ])
     }
 }
