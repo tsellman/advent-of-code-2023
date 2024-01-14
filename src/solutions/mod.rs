@@ -14,6 +14,7 @@ mod day13;
 mod day14;
 mod day15;
 mod day16;
+mod day17;
 mod day18;
 mod day19;
 mod day20;
@@ -48,6 +49,7 @@ pub fn get_solution(day: u8) -> Box<dyn Harness> {
         14 => Box::new(day14::Day14 {}),
         15 => Box::new(day15::Day15 {}),
         16 => Box::new(day16::Day16 {}),
+        17 => Box::new(day17::Day17 {}),
         18 => Box::new(day18::Day18 {}),
         19 => Box::new(day19::Day19 {}),
         20 => Box::new(day20::Day20 {}),
